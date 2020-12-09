@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+}
+
+group 'io.github.stuff_stuffs'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'it.unimi.dsi', name: 'fastutil', version: '8.2.1'
+}
+
+test {
+    useJUnitPlatform()
+}
