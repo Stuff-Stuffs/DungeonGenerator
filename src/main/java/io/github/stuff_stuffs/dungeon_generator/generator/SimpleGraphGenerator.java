@@ -13,7 +13,7 @@ import java.util.*;
 
 public class SimpleGraphGenerator implements GraphGenerator {
     @Override
-    public Graph<Room, Connector> generateGraph(final int size, final long seed) {
+    public MutableGraph<Room, Connector> generateGraph(final int size, final long seed) {
         final Room start = new Room("start", new Vec2i(0, 0));
         final List<Room> rooms = new ArrayList<>();
         int s = (int) Math.ceil(Math.sqrt(size + 1));

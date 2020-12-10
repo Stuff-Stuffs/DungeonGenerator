@@ -11,6 +11,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
+import it.unimi.dsi.fastutil.objects.ReferenceArraySet;
 
 import java.awt.*;
 import java.util.Collection;
@@ -30,7 +31,7 @@ public class SimpleDungeonGenerator implements DungeonGenerator {
     public Dungeon generate(final int size) {
         final long time = System.currentTimeMillis();
         final GraphGenerator graphGenerator = new SimpleGraphGenerator();
-        final Graph<Room, Connector> graph = graphGenerator.generateGraph(size - 1, seed);
+        final MutableGraph<Room, Connector> graph = graphGenerator.generateGraph(size - 1, seed);
         final Map<Graph.Node<Room, Connector>, RandomPartition.Partition<Room, Connector>> partitionMap = RandomPartition.partition(graph, (int) Math.ceil(Math.sqrt(size)), new Xoroshiro256(seed + 1));
         final Collection<RandomPartition.Partition<Room, Connector>> partitions = partitionMap.values();
         final Xoroshiro256 random = new Xoroshiro256(seed + 2);
@@ -81,7 +82,7 @@ public class SimpleDungeonGenerator implements DungeonGenerator {
         };
     }
 
-    private void setupRequirements(final Map<Graph.Node<Room, Connector>, RandomPartition.Partition<Room, Connector>> partitionMap, final Graph<Room, Connector> graph, final Room start, final Random random) {
+    private void setupRequirements(final Map<Graph.Node<Room, Connector>, RandomPartition.Partition<Room, Connector>> partitionMap, final MutableGraph<Room, Connector> graph, final Room start, final Random random) {
         final MutableGraph<RandomPartition.Partition<Room, Connector>, Object> superGraph = new ReferenceMutableMapGraph<>();
         for (final RandomPartition.Partition<Room, Connector> partition : partitionMap.values()) {
             superGraph.insert(partition);
@@ -107,6 +108,17 @@ public class SimpleDungeonGenerator implements DungeonGenerator {
         }, random);
         for (final Int2ObjectMap.Entry<List<RandomPartition.Partition<Room, Connector>>> entry : keyMap.int2ObjectEntrySet()) {
             setupKeys(entry.getIntKey(), entry.getValue(), random);
+        }
+        for (final RandomPartition.Partition<Room, Connector> partition : partitionMap.values()) {
+            final Collection<Graph.Edge<Room, Connector>> edgesToDelete = new ReferenceArraySet<>();
+            for (final Graph.Edge<Room, Connector> outgoingEdge : partition.getOutgoingEdges()) {
+                if (outgoingEdge.getValue().getRequirement() != 0 && !keyMap.containsKey(outgoingEdge.getValue().getRequirement())) {
+                    edgesToDelete.add(outgoingEdge);
+                }
+            }
+            for (final Graph.Edge<Room, Connector> edge : edgesToDelete) {
+                graph.removeEdge(edge.getFirst().getValue(), edge.getSecond().getValue());
+            }
         }
     }
 

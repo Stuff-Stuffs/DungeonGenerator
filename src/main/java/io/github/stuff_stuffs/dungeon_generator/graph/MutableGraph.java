@@ -11,6 +11,8 @@ public interface MutableGraph<V, E> extends Graph<V, E> {
 
     boolean remove(V value);
 
+    boolean removeEdge(V first, V second);
+
     @Override
     MutableGraph<V, E> copy();
 

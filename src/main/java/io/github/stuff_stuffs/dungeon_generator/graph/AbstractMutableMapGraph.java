@@ -1,7 +1,6 @@
 package io.github.stuff_stuffs.dungeon_generator.graph;
 
 import java.util.*;
-import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 
 public abstract class AbstractMutableMapGraph<V, E> implements MutableGraph<V, E> {
@@ -15,6 +14,17 @@ public abstract class AbstractMutableMapGraph<V, E> implements MutableGraph<V, E
         this.edges = edges;
         this.collectionFactory = collectionFactory;
         edgeCollection = collectionFactory.get();
+    }
+
+    @Override
+    public boolean removeEdge(final V first, final V second) {
+        final EdgeImpl edge = (EdgeImpl) getEdge(first, second);
+        if (edge == null) {
+            return false;
+        }
+        edges.get(edge.first).remove(edge);
+        edges.get(edge.second).remove(edge);
+        return true;
     }
 
     @Override
@@ -67,7 +77,7 @@ public abstract class AbstractMutableMapGraph<V, E> implements MutableGraph<V, E
         if (!firstValid) {
             return false;
         }
-        boolean secondValid = true;
+        final boolean secondValid = true;
         final Collection<Edge<V, E>> secondEdges = edges.get(secondNode);
         for (final Iterator<Edge<V, E>> iterator = secondEdges.iterator(); iterator.hasNext(); ) {
             final Edge<V, E> edge = iterator.next();
@@ -125,7 +135,7 @@ public abstract class AbstractMutableMapGraph<V, E> implements MutableGraph<V, E
     }
 
     @Override
-    public Edge<V, E> getEdge(V first, V second) {
+    public Edge<V, E> getEdge(final V first, final V second) {
         final Node<V, E> firstNode = nodeMap.get(first);
         if (firstNode == null) {
             return null;
