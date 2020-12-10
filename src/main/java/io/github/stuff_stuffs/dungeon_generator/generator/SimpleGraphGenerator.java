@@ -40,7 +40,7 @@ public class SimpleGraphGenerator implements GraphGenerator {
         }
         MutableGraph<Room, Connector> graph = MutableGraph.fromTree(tree, ReferenceMutableMapGraph::new);
         List<Direction> directionList = Arrays.asList(Direction.values());
-        for (int i = 0; i < size/4; i++) {
+        for (int i = 0; i < size/2; i++) {
             int x = random.nextInt(s);
             int y = random.nextInt(s);
             Direction direction = RandomUtil.getRandom(directionList, random);

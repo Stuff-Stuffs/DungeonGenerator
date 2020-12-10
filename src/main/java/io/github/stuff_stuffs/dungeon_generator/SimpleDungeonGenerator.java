@@ -9,9 +9,8 @@ import io.github.stuff_stuffs.dungeon_generator.util.RandomUtil;
 import io.github.stuff_stuffs.dungeon_generator.util.Xoroshiro256;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
-import it.unimi.dsi.fastutil.objects.ReferenceArraySet;
+import it.unimi.dsi.fastutil.ints.IntIterator;
+import it.unimi.dsi.fastutil.objects.*;
 
 import java.awt.*;
 import java.util.Collection;
@@ -120,12 +119,24 @@ public class SimpleDungeonGenerator implements DungeonGenerator {
                 graph.removeEdge(edge.getFirst().getValue(), edge.getSecond().getValue());
             }
         }
+        Reference2IntMap<Room> minCosts = Dijkstra.findShortestPath(graph, start, edge -> 1);
+        IntIterator costIterator = minCosts.values().iterator();
+        int maxCost = 0;
+        while (costIterator.hasNext()) {
+            maxCost = Math.max(maxCost, costIterator.nextInt());
+        }
+        for (Reference2IntMap.Entry<Room> entry : minCosts.reference2IntEntrySet()) {
+            entry.getKey().setDifficulty(entry.getIntValue()/(double)maxCost);
+        }
     }
 
     private void setupKeys(final int key, final List<RandomPartition.Partition<Room, Connector>> partitions, final Random random) {
+        final Collection<Room> rooms = new ReferenceOpenHashSet<>();
+        for (final RandomPartition.Partition<Room, Connector> partition : partitions) {
+            rooms.addAll(partition.getVertices());
+        }
         while (true) {
-            final RandomPartition.Partition<Room, Connector> partition = RandomUtil.getRandom(partitions, random);
-            final Room room = RandomUtil.getRandom(partition.getVertices(), random);
+            final Room room = RandomUtil.getRandom(rooms, random);
             if (room.getProvidedRequirement() == 0) {
                 room.setProvidedRequirement(key);
                 break;

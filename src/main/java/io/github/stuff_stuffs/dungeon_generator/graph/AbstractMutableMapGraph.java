@@ -24,6 +24,7 @@ public abstract class AbstractMutableMapGraph<V, E> implements MutableGraph<V, E
         }
         edges.get(edge.first).remove(edge);
         edges.get(edge.second).remove(edge);
+        edgeCollection.remove(edge);
         return true;
     }
 
@@ -77,7 +78,7 @@ public abstract class AbstractMutableMapGraph<V, E> implements MutableGraph<V, E
         if (!firstValid) {
             return false;
         }
-        final boolean secondValid = true;
+        boolean secondValid = true;
         final Collection<Edge<V, E>> secondEdges = edges.get(secondNode);
         for (final Iterator<Edge<V, E>> iterator = secondEdges.iterator(); iterator.hasNext(); ) {
             final Edge<V, E> edge = iterator.next();
@@ -88,7 +89,7 @@ public abstract class AbstractMutableMapGraph<V, E> implements MutableGraph<V, E
                     if (replace) {
                         iterator.remove();
                     } else {
-                        firstValid = false;
+                        secondValid = false;
                     }
                 }
             }

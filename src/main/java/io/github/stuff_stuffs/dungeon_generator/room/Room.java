@@ -9,10 +9,19 @@ public class Room {
     private final Vec2i pos;
     private int colour = Color.GREEN.getRGB();
     private int providedRequirement = 0;
+    private double difficulty = 0;
 
     public Room(final String name, Vec2i pos) {
         this.name = name;
         this.pos = pos;
+    }
+
+    public void setDifficulty(double difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public double getDifficulty() {
+        return difficulty;
     }
 
     public void setColour(int colour) {

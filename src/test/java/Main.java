@@ -29,9 +29,7 @@ public class Main extends JPanel {
         frame.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(final KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    System.exit(0);
-                } else if (e.getKeyCode() == KeyEvent.VK_F5) {
+                if (e.getKeyCode() == KeyEvent.VK_F5) {
                     panel.regenerate(System.nanoTime());
                 } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                     final DungeonDrawer dungeonView = panel.dungeonDrawer;
@@ -49,6 +47,15 @@ public class Main extends JPanel {
                     final DungeonDrawer dungeonView = panel.dungeonDrawer;
                     final Vec2i pos = dungeonView.getPos();
                     dungeonView.setPos(pos.add(new Vec2i(0, -1)));
+                } else if (e.getKeyCode() == KeyEvent.VK_K) {
+                    final DungeonDrawer dungeonDrawer = panel.dungeonDrawer;
+                    dungeonDrawer.setMode(DungeonDrawer.Mode.KEY);
+                } else if (e.getKeyCode() == KeyEvent.VK_D) {
+                    final DungeonDrawer dungeonDrawer = panel.dungeonDrawer;
+                    dungeonDrawer.setMode(DungeonDrawer.Mode.DIFFICULTY);
+                } else if (e.getKeyCode() == KeyEvent.VK_C) {
+                    final DungeonDrawer dungeonDrawer = panel.dungeonDrawer;
+                    dungeonDrawer.setMode(DungeonDrawer.Mode.cycle(dungeonDrawer.getMode()));
                 }
                 panel.paint(frame.getGraphics());
             }
@@ -59,12 +66,9 @@ public class Main extends JPanel {
 
     private void regenerate(final long seed) {
         if (generatorThread == null) {
-            generatorThread = new Thread(() -> {
-                dungeonGen = new SimpleDungeonGenerator(seed);
-                dungeonGen.generate(256);
-                generatorThread = null;
-            });
-            generatorThread.start();
+            dungeonGen = new SimpleDungeonGenerator(seed);
+            dungeonGen.generate(512);
+            generatorThread = null;
         }
     }
 
