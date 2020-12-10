@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-group 'io.github.stuff_stuffs.dungeon_generator'
+group 'io.github.stuff_stuffs.Dungeon-Generator'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -18,8 +18,24 @@ test {
     useJUnitPlatform()
 }
 
+task sourceJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allJava
+}
+
+
 publishing {
     repositories {
         mavenLocal()
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'io.github.stuff_stuffs.Dungeon-Generator'
+            artifactId = 'Dungeon-Generator'
+            version = '1.0'
+
+            from components.java
+            artifact sourceJar
+        }
     }
 }
