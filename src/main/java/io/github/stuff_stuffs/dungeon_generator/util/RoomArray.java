@@ -48,16 +48,16 @@ public class RoomArray {
 
     public Collection<Direction> getEmptyDirections(final int x, final int y) {
         final List<Direction> directions = new ArrayList<>(4);
-        if (isValid(x + 1, y)) {
+        if (isValid(x, y - 1)) {
             directions.add(Direction.NORTH);
         }
-        if (isValid(x - 1, y)) {
+        if (isValid(x, y + 1)) {
             directions.add(Direction.SOUTH);
         }
-        if (isValid(x, y + 1)) {
+        if (isValid(x + 1, y)) {
             directions.add(Direction.EAST);
         }
-        if (isValid(x, y - 1)) {
+        if (isValid(x - 1, y)) {
             directions.add(Direction.WEST);
         }
         return directions;

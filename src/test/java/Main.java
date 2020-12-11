@@ -67,7 +67,7 @@ public class Main extends JPanel {
     private void regenerate(final long seed) {
         if (generatorThread == null) {
             dungeonGen = new SimpleDungeonGenerator(seed);
-            dungeonGen.generate(512);
+            dungeonGen.generate(100);
             generatorThread = null;
         }
     }

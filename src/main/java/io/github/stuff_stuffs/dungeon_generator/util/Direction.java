@@ -1,10 +1,10 @@
 package io.github.stuff_stuffs.dungeon_generator.util;
 
 public enum Direction {
-    NORTH(new Vec2i(1, 0)),
-    EAST(new Vec2i(0, 1)),
-    SOUTH(new Vec2i(-1, 0)),
-    WEST(new Vec2i(0, -1));
+    NORTH(new Vec2i(0, -1)),
+    EAST(new Vec2i(1, 0)),
+    SOUTH(new Vec2i(0, 1)),
+    WEST(new Vec2i(-1, 0));
 
     private final Vec2i offset;
 

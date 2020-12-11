@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'io.github.stuff_stuffs.Dungeon-Generator'
-version '1.1'
+version '1.2'
 
 repositories {
     mavenCentral()
@@ -32,7 +32,7 @@ publishing {
         mavenJava(MavenPublication) {
             groupId = 'io.github.stuff_stuffs.Dungeon-Generator'
             artifactId = 'Dungeon-Generator'
-            version = '1.1'
+            version = '1.2'
 
             from components.java
             artifact sourceJar
