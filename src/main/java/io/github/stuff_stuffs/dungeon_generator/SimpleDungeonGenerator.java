@@ -20,14 +20,14 @@ import java.util.Random;
 
 public class SimpleDungeonGenerator implements DungeonGenerator {
     private final long seed;
-    private Dungeon dungeon;
+    private DungeonData dungeon;
 
     public SimpleDungeonGenerator(final long seed) {
         this.seed = seed;
     }
 
     @Override
-    public Dungeon generate(final int size) {
+    public DungeonData generate(final int size) {
         final long time = System.currentTimeMillis();
         final GraphGenerator graphGenerator = new SimpleGraphGenerator();
         final MutableGraph<Room, Connector> graph = graphGenerator.generateGraph(size - 1, seed);
@@ -66,9 +66,9 @@ public class SimpleDungeonGenerator implements DungeonGenerator {
         if (startRoom == null) {
             throw new RuntimeException();
         }
-        setupRequirements(partitionMap, graph, startRoom, random);
+        int length = setupRequirements(partitionMap, graph, startRoom, random);
         System.out.println((System.currentTimeMillis() - time) / 1000d);
-        return dungeon = new Dungeon() {
+        return dungeon = new DungeonData() {
             @Override
             public Graph<Room, Connector> getGraph() {
                 return graph;
@@ -78,10 +78,20 @@ public class SimpleDungeonGenerator implements DungeonGenerator {
             public int getSize() {
                 return 255;
             }
+
+            @Override
+            public int getLength() {
+                return length;
+            }
+
+            @Override
+            public int getRequirements() {
+                return 0;
+            }
         };
     }
 
-    private void setupRequirements(final Map<Graph.Node<Room, Connector>, RandomPartition.Partition<Room, Connector>> partitionMap, final MutableGraph<Room, Connector> graph, final Room start, final Random random) {
+    private int setupRequirements(final Map<Graph.Node<Room, Connector>, RandomPartition.Partition<Room, Connector>> partitionMap, final MutableGraph<Room, Connector> graph, final Room start, final Random random) {
         final MutableGraph<RandomPartition.Partition<Room, Connector>, Object> superGraph = new ReferenceMutableMapGraph<>();
         for (final RandomPartition.Partition<Room, Connector> partition : partitionMap.values()) {
             superGraph.insert(partition);
@@ -128,6 +138,7 @@ public class SimpleDungeonGenerator implements DungeonGenerator {
         for (Reference2IntMap.Entry<Room> entry : minCosts.reference2IntEntrySet()) {
             entry.getKey().setDifficulty(entry.getIntValue()/(double)maxCost);
         }
+        return maxCost;
     }
 
     private void setupKeys(final int key, final List<RandomPartition.Partition<Room, Connector>> partitions, final Random random) {
@@ -159,7 +170,7 @@ public class SimpleDungeonGenerator implements DungeonGenerator {
     }
 
     @Override
-    public Dungeon getDungeon() {
+    public DungeonData getDungeon() {
         return dungeon;
     }
 }

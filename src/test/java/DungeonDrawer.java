@@ -1,4 +1,4 @@
-import io.github.stuff_stuffs.dungeon_generator.Dungeon;
+import io.github.stuff_stuffs.dungeon_generator.DungeonData;
 import io.github.stuff_stuffs.dungeon_generator.graph.Graph;
 import io.github.stuff_stuffs.dungeon_generator.room.Connector;
 import io.github.stuff_stuffs.dungeon_generator.room.Room;
@@ -32,12 +32,12 @@ public class DungeonDrawer {
         return pos;
     }
 
-    public void draw(final Graphics2D graphics, final Dungeon dungeon) {
+    public void draw(final Graphics2D graphics, final DungeonData dungeonData) {
         graphics.getRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS);
-        for (final Graph.Edge<Room, Connector> edge : dungeon.getGraph().getEdges()) {
+        for (final Graph.Edge<Room, Connector> edge : dungeonData.getGraph().getEdges()) {
             drawEdge(edge, graphics);
         }
-        for (final Room room : dungeon.getGraph()) {
+        for (final Room room : dungeonData.getGraph()) {
             drawRoom(room, graphics);
         }
     }
