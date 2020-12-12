@@ -3,9 +3,7 @@ package io.github.stuff_stuffs.dungeon_generator.graph;
 import io.github.stuff_stuffs.dungeon_generator.util.RandomUtil;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
+import it.unimi.dsi.fastutil.objects.*;
 
 import java.util.*;
 
@@ -49,7 +47,7 @@ public final class RandomPartition {
         final List<Collection<Graph.Edge<V, E>>> outgoingEdges = new ObjectArrayList<>(partitionCount);
         for (int i = 0; i < partitionCount; i++) {
             adjacent.add(new IntArrayList());
-            outgoingEdges.add(new ReferenceOpenHashSet<>());
+            outgoingEdges.add(new ReferenceLinkedOpenHashSet<>());
         }
         for (int i = 0, partitionsSize = partitions.size(); i < partitionsSize; i++) {
             final Collection<V> partition = partitions.get(i);
@@ -82,7 +80,7 @@ public final class RandomPartition {
             }
             vePartition.setAdjacent(adjacentList);
         }
-        final Map<Graph.Node<V, E>, Partition<V, E>> partitionMap = new Reference2ReferenceOpenHashMap<>();
+        final Map<Graph.Node<V, E>, Partition<V, E>> partitionMap = new Reference2ReferenceLinkedOpenHashMap<>();
         for (int i = 0, partitionsSize = partitions.size(); i < partitionsSize; i++) {
             final List<V> partition = partitions.get(i);
             for (final V v : partition) {

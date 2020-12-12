@@ -14,7 +14,7 @@ public interface Graph<V, E> extends Iterable<V> {
     int size();
 
     interface Node<V, E> {
-        List<? extends Edge<V, E>> getEdges();
+        List<Edge<V, E>> getEdges();
 
         V getValue();
     }

@@ -1,21 +1,19 @@
 package io.github.stuff_stuffs.dungeon_generator.graph;
 
-import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
-import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
+import it.unimi.dsi.fastutil.objects.*;
 
 public class ReferenceMutableMapGraph<V, E> extends AbstractMutableMapGraph<V, E> {
     public ReferenceMutableMapGraph() {
-        super(new Reference2ReferenceOpenHashMap<>(), new Reference2ReferenceOpenHashMap<>(), ReferenceArrayList::new);
+        super(new Reference2ReferenceLinkedOpenHashMap<>(), new Object2ObjectLinkedOpenHashMap<>(), ObjectArrayList::new);
     }
 
-    public ReferenceMutableMapGraph(Graph<V, E> graph) {
+    public ReferenceMutableMapGraph(final Graph<V, E> graph) {
         super(new Reference2ReferenceOpenHashMap<>(graph.size()), new Reference2ReferenceOpenHashMap<>(graph.size()), ReferenceArrayList::new);
-        for (V v : graph) {
+        for (final V v : graph) {
             insert(v);
         }
-        for (Edge<V, E> edge : graph.getEdges()) {
-            if(!addEdge(edge.getFirst().getValue(), edge.getSecond().getValue(), edge.getValue(), false)) {
+        for (final Edge<V, E> edge : graph.getEdges()) {
+            if (!addEdge(edge.getFirst().getValue(), edge.getSecond().getValue(), edge.getValue(), false)) {
                 throw new RuntimeException();
             }
         }

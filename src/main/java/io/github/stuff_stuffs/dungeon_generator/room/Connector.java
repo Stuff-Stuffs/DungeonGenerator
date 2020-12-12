@@ -4,10 +4,12 @@ import io.github.stuff_stuffs.dungeon_generator.util.Direction;
 
 public class Connector {
     private final Direction direction;
+    private final Room from;
     private int requirement = -1;
 
-    public Connector(final Direction direction) {
+    public Connector(final Direction direction, final Room from) {
         this.direction = direction;
+        this.from = from;
     }
 
     public void setRequirement(final int requirement) {
@@ -18,7 +20,11 @@ public class Connector {
         return requirement;
     }
 
-    public Direction getDirection() {
-        return direction;
+    public Direction getDirection(final Room perspective) {
+        if (from == perspective) {
+            return direction;
+        } else {
+            return Direction.getOpposite(direction);
+        }
     }
 }

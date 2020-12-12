@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.RoundRectangle2D;
+import java.util.List;
 
 public class DungeonDrawer {
     private final double scale = 10;
@@ -38,6 +39,10 @@ public class DungeonDrawer {
             drawEdge(edge, graphics);
         }
         for (final Room room : dungeonData.getGraph()) {
+            final List<? extends Graph.Edge<Room, Connector>> edges = dungeonData.getGraph().get(room).getEdges();
+            if (edges.size() == 0 || edges.size() > 4) {
+                System.out.println("ss");
+            }
             drawRoom(room, graphics);
         }
     }
@@ -48,7 +53,7 @@ public class DungeonDrawer {
         affineTransform.translate((firstPos.getX() + pos.getX()) * scale, (firstPos.getY() + pos.getY()) * scale);
         final AffineTransform pre = graphics.getTransform();
         graphics.setTransform(affineTransform);
-        final Shape shape = new Line2D.Double(0, 0, edge.getValue().getDirection().getOffset().getX() * scale, edge.getValue().getDirection().getOffset().getY() * scale);
+        final Shape shape = new Line2D.Double(0, 0, edge.getValue().getDirection(edge.getFirst().getValue()).getOffset().getX() * scale, edge.getValue().getDirection(edge.getFirst().getValue()).getOffset().getY() * scale);
         graphics.setColor(new Color(edge.getValue().getRequirement() == -1 ? Color.BLACK.getRGB() : HashCommon.mix(edge.getValue().getRequirement())));
         graphics.draw(shape);
         graphics.setTransform(pre);
@@ -81,7 +86,7 @@ public class DungeonDrawer {
     }
 
     public Color getDifficultyColor(final double val) {
-        final float normalized = (float)((1-Math.min(Math.max(val, 0), 1)) * (2/3d));
+        final float normalized = (float) ((1 - Math.min(Math.max(val, 0), 1)) * (2 / 3d));
         return Color.getHSBColor(normalized, 1, 1);
     }
 

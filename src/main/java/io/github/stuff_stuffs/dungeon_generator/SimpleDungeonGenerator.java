@@ -8,6 +8,7 @@ import io.github.stuff_stuffs.dungeon_generator.room.Room;
 import io.github.stuff_stuffs.dungeon_generator.util.RandomUtil;
 import io.github.stuff_stuffs.dungeon_generator.util.Xoroshiro256;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntIterator;
 import it.unimi.dsi.fastutil.objects.*;
@@ -102,7 +103,7 @@ public class SimpleDungeonGenerator implements DungeonGenerator {
             }
         }
         final ReferenceArrayList<RandomPartition.Partition<Room, Connector>> visited = new ReferenceArrayList<>();
-        final Int2ObjectMap<List<RandomPartition.Partition<Room, Connector>>> keyMap = new Int2ObjectArrayMap<>();
+        final Int2ObjectMap<List<RandomPartition.Partition<Room, Connector>>> keyMap = new Int2ObjectLinkedOpenHashMap<>();
         RandomWalker.walk(superGraph, partitionMap.get(graph.get(start)), (prev, current) -> {
             if (prev != null) {
                 final List<Graph.Edge<Room, Connector>> edges = getEdges(partitionMap, prev, current);
@@ -142,7 +143,7 @@ public class SimpleDungeonGenerator implements DungeonGenerator {
     }
 
     private void setupKeys(final int key, final List<RandomPartition.Partition<Room, Connector>> partitions, final Random random) {
-        final Collection<Room> rooms = new ReferenceOpenHashSet<>();
+        final Collection<Room> rooms = new ReferenceLinkedOpenHashSet<>();
         for (final RandomPartition.Partition<Room, Connector> partition : partitions) {
             rooms.addAll(partition.getVertices());
         }

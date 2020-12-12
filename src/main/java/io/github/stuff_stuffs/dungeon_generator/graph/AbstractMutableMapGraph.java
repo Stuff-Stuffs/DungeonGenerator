@@ -35,7 +35,7 @@ public abstract class AbstractMutableMapGraph<V, E> implements MutableGraph<V, E
 
     @Override
     public Iterable<Edge<V, E>> getEdges() {
-        return edgeCollection::iterator;
+        return edgeCollection;
     }
 
     @Override
@@ -58,49 +58,20 @@ public abstract class AbstractMutableMapGraph<V, E> implements MutableGraph<V, E
         if (secondNode == null) {
             return false;
         }
-        final Edge<V, E> targetEdge = new EdgeImpl(edgeValue, firstNode, secondNode);
-        final Collection<Edge<V, E>> firstEdges = edges.get(firstNode);
-        boolean firstValid = true;
-        for (final Iterator<Edge<V, E>> iterator = firstEdges.iterator(); iterator.hasNext(); ) {
-            final Edge<V, E> edge = iterator.next();
-            final Node<V, E> edgeFirst = edge.getFirst();
-            final Node<V, E> edgeSecond = edge.getSecond();
-            if (edgeFirst == firstNode) {
-                if (edgeSecond == secondNode) {
-                    if (replace) {
-                        iterator.remove();
-                    } else {
-                        firstValid = false;
-                    }
-                }
-            }
-        }
-        if (!firstValid) {
+        final Edge<V, E> edge = getEdge(first, second);
+        if (edge != null && !replace) {
             return false;
         }
-        boolean secondValid = true;
-        final Collection<Edge<V, E>> secondEdges = edges.get(secondNode);
-        for (final Iterator<Edge<V, E>> iterator = secondEdges.iterator(); iterator.hasNext(); ) {
-            final Edge<V, E> edge = iterator.next();
-            final Node<V, E> edgeFirst = edge.getFirst();
-            final Node<V, E> edgeSecond = edge.getSecond();
-            if (edgeFirst == firstNode) {
-                if (edgeSecond == secondNode) {
-                    if (replace) {
-                        iterator.remove();
-                    } else {
-                        secondValid = false;
-                    }
-                }
-            }
+        if (edge != null) {
+            nodeMap.get(first).getEdges().remove(edge);
+            nodeMap.get(second).getEdges().remove(edge);
+            edgeCollection.remove(edge);
         }
-        if (firstValid & secondValid) {
-            firstEdges.add(targetEdge);
-            secondEdges.add(targetEdge);
-            edgeCollection.add(targetEdge);
-            return true;
-        }
-        return false;
+        final Edge<V, E> targetEdge = new EdgeImpl(edgeValue, firstNode, secondNode);
+        nodeMap.get(first).getEdges().add(targetEdge);
+        nodeMap.get(second).getEdges().add(targetEdge);
+        edgeCollection.add(targetEdge);
+        return true;
     }
 
     @Override
@@ -162,13 +133,32 @@ public abstract class AbstractMutableMapGraph<V, E> implements MutableGraph<V, E
         }
 
         @Override
-        public List<? extends Edge<V, E>> getEdges() {
-            return Collections.unmodifiableList(edges.get(this));
+        public List<Edge<V, E>> getEdges() {
+            return edges.get(this);
         }
 
         @Override
         public V getValue() {
             return value;
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            final NodeImpl node = (NodeImpl) o;
+
+            return value.equals(node.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
         }
     }
 
@@ -197,5 +187,54 @@ public abstract class AbstractMutableMapGraph<V, E> implements MutableGraph<V, E
         public E getValue() {
             return value;
         }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            final EdgeImpl edge = (EdgeImpl) o;
+
+            if (!value.equals(edge.value)) {
+                return false;
+            }
+            return (first.equals(edge.first) && second.equals(edge.second)) || first.equals(edge.second) && second.equals(edge.first);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = value.hashCode();
+            result = 31 * result + first.hashCode();
+            result = result + second.hashCode();
+            return result;
+        }
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final AbstractMutableMapGraph<?, ?> that = (AbstractMutableMapGraph<?, ?>) o;
+
+        if (!nodeMap.equals(that.nodeMap)) {
+            return false;
+        }
+        return edges.equals(that.edges);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = nodeMap.hashCode();
+        result = 31 * result + edges.hashCode();
+        return result;
     }
 }

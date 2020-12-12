@@ -1,6 +1,5 @@
 package io.github.stuff_stuffs.dungeon_generator.generator;
 
-import io.github.stuff_stuffs.dungeon_generator.graph.Graph;
 import io.github.stuff_stuffs.dungeon_generator.graph.MutableGraph;
 import io.github.stuff_stuffs.dungeon_generator.graph.ReferenceMutableMapGraph;
 import io.github.stuff_stuffs.dungeon_generator.room.Connector;
@@ -16,7 +15,7 @@ public class SimpleGraphGenerator implements GraphGenerator {
     public MutableGraph<Room, Connector> generateGraph(final int size, final long seed) {
         final Room start = new Room("start", new Vec2i(0, 0));
         final List<Room> rooms = new ArrayList<>();
-        int s = (int) Math.ceil(Math.sqrt(size + 1));
+        final int s = (int) Math.ceil(Math.sqrt(size + 1));
         final RoomArray roomArray = new RoomArray(s);
         final MutableTree<Room, Connector> tree = new ReferenceMutableTree<>(start);
         rooms.add(start);
@@ -32,22 +31,22 @@ public class SimpleGraphGenerator implements GraphGenerator {
                     final Vec2i nextPos = pos.add(direction.getOffset());
                     final Room next = new Room("" + i, nextPos);
                     roomArray.set(nextPos, next);
-                    tree.insert(room, next, new Connector(direction));
+                    tree.insert(room, next, new Connector(direction, room));
                     rooms.add(next);
                     break;
                 }
             }
         }
-        MutableGraph<Room, Connector> graph = MutableGraph.fromTree(tree, ReferenceMutableMapGraph::new);
-        List<Direction> directionList = Arrays.asList(Direction.values());
-        for (int i = 0; i < size/2; i++) {
-            int x = random.nextInt(s);
-            int y = random.nextInt(s);
-            Direction direction = RandomUtil.getRandom(directionList, random);
-            if(roomArray.isFilled(x,y) && roomArray.isFilled(x + direction.getOffset().getX(), y + direction.getOffset().getY())) {
-                Room first = roomArray.get(x,y);
-                Room second = roomArray.get(x + direction.getOffset().getX(), y + direction.getOffset().getY());
-                graph.addEdge(first, second, new Connector(direction), false);
+        final MutableGraph<Room, Connector> graph = MutableGraph.fromTree(tree, ReferenceMutableMapGraph::new);
+        final List<Direction> directionList = Arrays.asList(Direction.values());
+        for (int i = 0; i < size / 2; i++) {
+            final int x = random.nextInt(s);
+            final int y = random.nextInt(s);
+            final Direction direction = RandomUtil.getRandom(directionList, random);
+            if (roomArray.isFilled(x, y) && roomArray.isFilled(x + direction.getOffset().getX(), y + direction.getOffset().getY())) {
+                final Room first = roomArray.get(x, y);
+                final Room second = roomArray.get(x + direction.getOffset().getX(), y + direction.getOffset().getY());
+                graph.addEdge(first, second, new Connector(direction, first), false);
             }
         }
         return graph;
